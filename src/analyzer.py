@@ -3,6 +3,7 @@ FocusPulse Analyzer: Processes activity logs and categorizes focus patterns
 """
 
 import pandas as pd
+import re
 from pathlib import Path
 from datetime import datetime, timedelta
 from collections import defaultdict
@@ -59,6 +60,14 @@ class ActivityAnalyzer:
             last_duration = (datetime.now() -
                              self.df.iloc[-1]['timestamp']).total_seconds()
             self.df.loc[len(self.df) - 1, 'duration_seconds'] = int(last_duration)
+
+        # Derive a base application name (e.g., strip Chrome tab titles)
+        self.df['base_app'] = self.df['app_name'].apply(self._extract_base_app)
+
+        # Create a display-friendly title that is sanitized for UI
+        self.df['display'] = self.df.apply(
+            lambda r: self._derive_display_title(r['app_name'], r['base_app']), axis=1
+        )
     
     def categorize_app(self, app_name: str) -> str:
         """
@@ -70,9 +79,11 @@ class ActivityAnalyzer:
         Returns:
             Category: 'focus', 'distraction', or 'neutral'
         """
-        if app_name in self.FOCUS_APPS:
+        base = self._extract_base_app(app_name)
+
+        if base in self.FOCUS_APPS:
             return 'focus'
-        elif app_name in self.DISTRACTION_APPS:
+        elif base in self.DISTRACTION_APPS:
             return 'distraction'
         return 'neutral'
     
@@ -149,7 +160,11 @@ class ActivityAnalyzer:
         cutoff_time = datetime.now() - timedelta(hours=hours)
         recent_df = self.df[self.df['timestamp'] >= cutoff_time]
         
-        app_time = recent_df.groupby('app_name')['duration_seconds'].sum().sort_values(
+        # Group by base application so Chrome tab titles do not fragment the results
+        if 'base_app' not in recent_df.columns:
+            recent_df['base_app'] = recent_df['app_name'].apply(self._extract_base_app)
+
+        app_time = recent_df.groupby('base_app')['duration_seconds'].sum().sort_values(
             ascending=False
         )
         
@@ -189,15 +204,22 @@ class ActivityAnalyzer:
         cutoff_time = datetime.now() - timedelta(hours=hours)
         recent_df = self.df[self.df['timestamp'] >= cutoff_time].copy()
         
-        # Add category
+        # Add category (use base app for categorization)
         recent_df['category'] = recent_df['app_name'].apply(self.categorize_app)
-        
+
         # Format time column for display
         recent_df['time'] = recent_df['timestamp'].dt.strftime('%H:%M:%S')
-        
+
+        # Ensure display and base_app exist
+        if 'display' not in recent_df.columns:
+            recent_df['base_app'] = recent_df['app_name'].apply(self._extract_base_app)
+            recent_df['display'] = recent_df.apply(
+                lambda r: self._derive_display_title(r['app_name'], r['base_app']), axis=1
+            )
+
         # Select columns for display and reverse order (most recent first)
-        display_df = recent_df[['time', 'app_name', 'category', 'duration_seconds']].copy()
-        display_df.columns = ['Time', 'App', 'Category', 'Duration (s)']
+        display_df = recent_df[['time', 'display', 'app_name', 'category', 'duration_seconds']].copy()
+        display_df.columns = ['Time', 'App', 'Raw App', 'Category', 'Duration (s)']
         display_df = display_df.iloc[::-1].reset_index(drop=True)
         
         return display_df
@@ -230,6 +252,73 @@ class ActivityAnalyzer:
         )
 
         return timeline
+
+    # --- Sanitization helpers ---
+    def _extract_base_app(self, app_name: str) -> str:
+        """
+        Extract a base application name from raw app_name.
+        Examples:
+            'Google Chrome: FocusPulse' -> 'Google Chrome'
+            'Google Chrome - Inbox - Gmail' -> 'Google Chrome'
+        """
+        if not isinstance(app_name, str):
+            return app_name
+
+        # Common separators used by tracker or AppleScript
+        for sep in [':', ' - ', ' — ', ' – ', ' -', '- '] :
+            if sep in app_name:
+                return app_name.split(sep)[0].strip()
+
+        return app_name.strip()
+
+    def _derive_display_title(self, raw_app: str, base_app: str) -> str:
+        """
+        Return a sanitized, display-friendly title for the UI.
+        Keeps raw_app intact in the CSV; display title is safe-for-UI.
+        """
+        # If this is Chrome (or similar)
+        if base_app and base_app.lower().startswith('google chrome'):
+            # Extract title after separator
+            parts = re.split(r'[:\-–—]{1,2}', raw_app, maxsplit=1)
+            title = parts[1].strip() if len(parts) > 1 else ''
+            title = self._sanitize_text(title)
+            if title:
+                return f"Chrome — {title}"
+            else:
+                return 'Chrome'
+
+        # For other apps, collapse whitespace and truncate
+        display = self._sanitize_text(raw_app)
+        # If sanitized text still equals base_app, prefer base_app for display
+        if display and display.startswith(base_app):
+            return base_app
+        return display if display else base_app
+
+    def _sanitize_text(self, text: str, max_length: int = 120) -> str:
+        """
+        Run deterministic sanitization on text for display:
+         - Collapse whitespace
+         - Remove control characters/newlines
+         - Mask emails
+         - Truncate to max_length
+        """
+        if not isinstance(text, str):
+            return ''
+
+        # Remove newlines and control chars
+        text = re.sub(r'[\r\n\t]+', ' ', text)
+
+        # Mask emails
+        text = re.sub(r"\b[\w.%-]+@[\w.-]+\.[A-Za-z]{2,6}\b", '[redacted email]', text)
+
+        # Collapse multiple spaces
+        text = re.sub(r'\s{2,}', ' ', text).strip()
+
+        # Truncate (keep end context a bit for longer strings?) - keep start
+        if len(text) > max_length:
+            text = text[:max_length-3].rstrip() + '...'
+
+        return text
 
 
 def print_summary(analyzer: ActivityAnalyzer) -> None:
