@@ -22,6 +22,15 @@ import hashlib
 from pathlib import Path
 from typing import Optional, Dict, Any
 
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    def load_dotenv(*args, **kwargs):
+        pass  # No-op if python-dotenv not installed
+
+# Load .env file at module import time with override to ensure fresh values
+load_dotenv(override=True)
+
 
 class GPTEnricher:
     """A small wrapper to call an LLM for classification with local caching.
@@ -32,9 +41,9 @@ class GPTEnricher:
 
     DEFAULT_CACHE = Path(__file__).parent.parent / "data" / "gpt_cache.json"
 
-    def __init__(self, cache_path: Optional[str] = None, api_key: Optional[str] = None, model: str = "gpt-4o-mini"):
+    def __init__(self, cache_path: Optional[str] = None, model: str = "gpt-4o-mini"):
         self.cache_path = Path(cache_path) if cache_path else self.DEFAULT_CACHE
-        self.api_key = api_key or os.environ.get('OPENAI_API_KEY')
+        self.api_key = os.environ.get('OPENAI_API_KEY')
         self.model = model
         self._load_cache()
 
@@ -71,9 +80,16 @@ class GPTEnricher:
 
         key = self._entry_key(text, entry_id)
         if not force and key in self._cache:
-            out = dict(self._cache[key])
-            out['cached'] = True
-            return out
+            cached_entry = self._cache[key]
+            # Prioritize user overrides, then real API results (skip simulated)
+            if cached_entry.get('user_override'):
+                out = dict(cached_entry)
+                out['cached'] = True
+                return out
+            elif cached_entry.get('model') and cached_entry.get('model') != 'simulated':
+                out = dict(cached_entry)
+                out['cached'] = True
+                return out
 
         # Build the prompt (system + few shots) - minimal, we send only the sanitized text
         prompt = self._build_prompt(text)
@@ -83,49 +99,97 @@ class GPTEnricher:
         used_model = None
 
         # Try real API if api_key present and openai is available
+        api_error = None
         if self.api_key:
             try:
                 import openai
-                openai.api_key = self.api_key
-                resp = openai.ChatCompletion.create(
-                    model=self.model,
-                    messages=[
-                        {"role": "system", "content": prompt['system']},
-                        {"role": "user", "content": prompt['user']}
-                    ],
-                    max_tokens=200,
-                    temperature=0.0,
-                    n=1,
-                )
-                raw = resp.choices[0].message.content
-                used_model = getattr(resp, 'model', self.model)
-            except Exception:
+
+                # Prefer the new OpenAI client if available
+                if hasattr(openai, 'OpenAI'):
+                    client = openai.OpenAI(api_key=self.api_key)
+                    resp = client.chat.completions.create(
+                        model=self.model,
+                        messages=[
+                            {"role": "system", "content": prompt['system']},
+                            {"role": "user", "content": prompt['user']}
+                        ],
+                        max_tokens=200,
+                        temperature=0.0,
+                    )
+                    # Robust extraction of text
+                    try:
+                        # new client: resp.choices[0].message.content or resp.choices[0].message['content']
+                        raw = resp.choices[0].message.content
+                    except Exception:
+                        try:
+                            raw = resp.choices[0].message['content']
+                        except Exception:
+                            # fallback to string conversion
+                            raw = str(resp)
+                    used_model = getattr(resp, 'model', self.model)
+                else:
+                    # Older openai package (pre-1.0)
+                    openai.api_key = self.api_key
+                    resp = openai.ChatCompletion.create(
+                        model=self.model,
+                        messages=[
+                            {"role": "system", "content": prompt['system']},
+                            {"role": "user", "content": prompt['user']}
+                        ],
+                        max_tokens=200,
+                        temperature=0.0,
+                        n=1,
+                    )
+                    raw = resp.choices[0].message.content
+                    used_model = getattr(resp, 'model', self.model)
+            except Exception as e:
                 # On any failure, fall back to simulated response
+                api_error = repr(e)
+                print(f"gpt_enricher: OpenAI call failed: {api_error}")
                 raw = None
 
         if raw is None:
-            raw = self._simulate_response(text)
-            used_model = 'simulated'
+            # No API response - return error state
+            return {
+                'category': 'not set',
+                'confidence': 0.0,
+                'tags': [],
+                'rationale': 'AI classification failed',
+                'model': 'error',
+                'api_error': api_error or 'No API response',
+                'cached': False
+            }
 
         parsed = self._parse_json(raw)
 
         if not parsed:
-            # fallback to conservative local categorization
-            parsed = self._local_fallback(text)
-            parsed['model'] = used_model
+            # Failed to parse response - return error state
+            return {
+                'category': 'not set',
+                'confidence': 0.0,
+                'tags': [],
+                'rationale': 'Failed to parse AI response',
+                'model': used_model,
+                'api_error': api_error or 'Parse error',
+                'cached': False
+            }
 
-        # Persist to cache
-        entry = dict(parsed)
-        entry['raw_response'] = raw
-        entry['model'] = used_model
-        entry['ts'] = int(time.time())
-        self._cache[key] = entry
-        try:
-            self._save_cache()
-        except Exception:
-            pass
+        # Persist to cache only if this result came from the real API
+        out = dict(parsed)
+        out['raw_response'] = raw
+        out['model'] = used_model
+        out['ts'] = int(time.time())
+        if api_error:
+            out['api_error'] = api_error
 
-        out = dict(entry)
+        if used_model and used_model != 'simulated':
+            # store only OpenAI-produced results
+            try:
+                self._cache[key] = dict(out)
+                self._save_cache()
+            except Exception:
+                pass
+
         out['cached'] = False
         return out
 
@@ -133,7 +197,11 @@ class GPTEnricher:
         system = (
             "You are a concise assistant that classifies short application/tab titles for productivity analysis. "
             "Respond ONLY with a single JSON object with fields: category, confidence, tags, rationale. "
-            "Allowed categories: focus, distraction, neutral. Confidence: float 0-100. Tags: array of short labels. "
+            "\n\nCategory definitions:\n"
+            "- focus: Apps/sites used for productive work (coding, writing, email, work research, design tools, documentation)\n"
+            "- distraction: Apps/sites primarily for entertainment, social media, gaming, or leisure (YouTube, social feeds, streaming)\n"
+            "- neutral: Ambiguous or utility apps that depend on context (browser without clear purpose, system tools, general search)\n"
+            "\nConfidence: float 0-100. Tags: array of short labels. "
             "Rationale: one short sentence <= 30 words. Do not include any other text."
         )
 
@@ -172,28 +240,35 @@ class GPTEnricher:
 
         return None
 
-    def _simulate_response(self, text: str) -> str:
-        """Return a deterministic simulated JSON response for testing without network."""
-        low = text.lower()
-        if 'youtube' in low or 'tiktok' in low or 'instagram' in low:
-            obj = {'category': 'distraction', 'confidence': 95.0, 'tags': ['video', 'entertainment'], 'rationale': 'Site indicates entertainment/video content.'}
-        elif 'gmail' in low or 'inbox' in low or 'mail' in low:
-            obj = {'category': 'neutral', 'confidence': 80.0, 'tags': ['email', 'communication'], 'rationale': 'Email/communication - often neutral.'}
-        elif any(x in low for x in ['code', 'vscode', 'pycharm', 'terminal']):
-            obj = {'category': 'focus', 'confidence': 99.0, 'tags': ['code', 'editor'], 'rationale': 'Developer editor - focused work.'}
-        elif 'linkedin' in low or 'twitter' in low or 'x -' in low:
-            obj = {'category': 'distraction', 'confidence': 70.0, 'tags': ['social'], 'rationale': 'Social feed - likely distraction.'}
-        else:
-            obj = {'category': 'neutral', 'confidence': 60.0, 'tags': [], 'rationale': 'Unclear from title; marked neutral by default.'}
-        return json.dumps(obj)
 
-    def _local_fallback(self, text: str) -> Dict[str, Any]:
-        """A conservative fallback if parsing fails."""
-        low = (text or '').lower()
-        if any(k in low for k in ['youtube', 'tiktok', 'instagram', 'reddit']):
-            return {'category': 'distraction', 'confidence': 80.0, 'tags': ['social'], 'rationale': 'Recognized social/video site.'}
-        if any(k in low for k in ['inbox', 'gmail', 'mail']):
-            return {'category': 'neutral', 'confidence': 70.0, 'tags': ['email'], 'rationale': 'Email-like title.'}
-        if any(k in low for k in ['code', 'vscode', 'pycharm', 'terminal']):
-            return {'category': 'focus', 'confidence': 90.0, 'tags': ['code'], 'rationale': 'Developer tool likely focused.'}
-        return {'category': 'neutral', 'confidence': 50.0, 'tags': [], 'rationale': 'Default neutral fallback.'}
+
+    def save_override(self, text: str, category: str, confidence: float = 100.0, 
+                      tags: list = None, rationale: str = None, entry_id: Optional[str] = None) -> None:
+        """Save a user override for a classification.
+        
+        Args:
+            text: The sanitized display title
+            category: User's chosen category (focus, distraction, neutral)
+            confidence: Confidence score (default 100 for user overrides)
+            tags: Optional list of tags
+            rationale: Optional user rationale
+            entry_id: Optional entry identifier for cache key
+        """
+        if category not in ('focus', 'distraction', 'neutral'):
+            raise ValueError(f"Invalid category: {category}")
+        
+        key = self._entry_key(text, entry_id)
+        entry = {
+            'category': category,
+            'confidence': confidence,
+            'tags': tags or [],
+            'rationale': rationale or f'User override: {category}',
+            'user_override': True,
+            'ts': int(time.time())
+        }
+        self._cache[key] = entry
+        self._save_cache()
+
+    def get_all_cached(self) -> Dict[str, Any]:
+        """Return all cached entries (for UI display)."""
+        return dict(self._cache)

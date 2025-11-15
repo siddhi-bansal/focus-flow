@@ -11,7 +11,15 @@ import plotly.graph_objects as go
 import plotly.express as px
 import threading
 
+# Load environment variables before importing other modules
+try:
+    from dotenv import load_dotenv
+    load_dotenv(override=True)
+except ImportError:
+    pass  # python-dotenv not installed
+
 from src.analyzer import ActivityAnalyzer
+from src.gpt_enricher import GPTEnricher
 
 
 # Page configuration
@@ -292,6 +300,110 @@ def main():
     # Raw data viewer
     with st.expander("📊 View Raw Data"):
         st.dataframe(analyzer.df.sort_values('timestamp', ascending=False), use_container_width=True)
+    
+    st.markdown("---")
+    
+    # AI Classification Section
+    st.markdown("### 🤖 Activity Classifications")
+    st.markdown("Review and adjust how your apps and websites are categorized.")
+    
+    enricher = GPTEnricher()
+    
+    # Get unique apps from activity log
+    if not analyzer.df.empty and 'display' in analyzer.df.columns:
+        unique_apps = analyzer.df['display'].unique()
+        
+        if len(unique_apps) > 0:
+            # Filter out system processes that shouldn't be classified
+            system_apps = {'Login Window', 'loginwindow', 'WindowServer', 'Dock'}
+            
+            # Pre-load all classifications once (don't force re-classification)
+            classifications = {}
+            
+            # Show loading indicator while classifying
+            with st.spinner("🔄 Loading AI classifications..."):
+                for app in sorted(unique_apps)[:30]:
+                    if not app or app == '' or app in system_apps:
+                        continue
+                    classifications[app] = enricher.classify(app, force=False)
+            
+            for app in sorted(unique_apps)[:30]:  # Show first 30
+                if not app or app == '' or app in system_apps:
+                    continue
+                
+                result = classifications[app]
+                category = result.get('category', 'neutral')
+                is_override = result.get('user_override', False)
+                original_category = None
+                is_not_set = (category == 'not set')
+                
+                col1, col2, col3 = st.columns([3, 1, 1])
+                
+                with col1:
+                    st.text(f"📱 {app}")
+                
+                with col2:
+                    # Show category with indicator if manually changed
+                    if is_override and 'original_category' in result:
+                        original_category = result['original_category']
+                        st.caption(f"✏️ You changed from: {original_category}")
+                    
+                    # Highlight "not set" in red
+                    if is_not_set:
+                        st.markdown(f"<span style='color: red; font-weight: bold;'>⚠️ Not Set</span>", unsafe_allow_html=True)
+                    
+                    # Dropdown for selecting category
+                    valid_categories = ["focus", "distraction", "neutral"]
+                    current_index = valid_categories.index(category) if category in valid_categories else 2
+                    
+                    new_category = st.selectbox(
+                        "Category",
+                        valid_categories,
+                        index=current_index,
+                        key=f"cat_{app}",
+                        label_visibility="collapsed"
+                    )
+                    
+                    # If user changed it, save override (without rerun in the loop)
+                    if new_category != category:
+                        enricher.save_override(
+                            text=app,
+                            category=new_category,
+                            confidence=100.0,
+                            rationale=f"Manually set to {new_category}"
+                        )
+                        st.success(f"✓ Saved")
+                        # We'll rerun at the end if any changes were made
+                
+                with col3:
+                    if is_override:
+                        col_label, col_btn = st.columns([2, 1])
+                        with col_label:
+                            st.caption("✏️ Manually set")
+                        with col_btn:
+                            if st.button("↩️", key=f"revert_{app}", help="Switch back to AI prediction"):
+                                # Get fresh AI prediction
+                                ai_result = enricher.classify(app, force=True)
+                                # Remove from cache to go back to AI
+                                import hashlib
+                                import json
+                                from pathlib import Path
+                                cache_key = hashlib.sha256(app.encode()).hexdigest()
+                                cache_file = Path("data/gpt_cache.json")
+                                if cache_file.exists():
+                                    cache = json.loads(cache_file.read_text())
+                                    if cache_key in cache:
+                                        del cache[cache_key]
+                                        cache_file.write_text(json.dumps(cache, indent=2))
+                                st.rerun()
+                    elif is_not_set:
+                        st.markdown(f"<span style='color: red;'>❌ AI failed</span>", unsafe_allow_html=True)
+                    else:
+                        st.caption(f"🤖 AI: {result.get('confidence', 0):.0f}%")
+        else:
+            st.info("No activities tracked yet. Start using your apps and they'll appear here!")
+    else:
+        st.info("No activity data available yet.")
 
 
 if __name__ == "__main__":

@@ -1,0 +1,379 @@
+{
+  "52d2ebd2cb92a70a498fa277ab62ae034885fa42": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "game",
+      "entertainment"
+    ],
+    "rationale": "Chess is primarily a game and associated with leisure activities.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"game\",\"entertainment\"],\"rationale\":\"Chess is primarily a game and associated with leisure activities.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189201
+  },
+  "2da96678c81f5481bcc801737700746c7a5e184e": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "browser",
+      "utility"
+    ],
+    "rationale": "Chrome is a web browser that can be used for various purposes.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"browser\",\"utility\"],\"rationale\":\"Chrome is a web browser that can be used for various purposes.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189202
+  },
+  "acfd8988948cec21c7ed02c8d676c67f22d33892": {
+    "category": "distraction",
+    "confidence": 95.0,
+    "tags": [
+      "video",
+      "entertainment"
+    ],
+    "rationale": "YouTube generally indicates entertainment/video content.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":95.0,\"tags\":[\"video\",\"entertainment\"],\"rationale\":\"YouTube generally indicates entertainment/video content.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189203
+  },
+  "f1d9cb7066f6b8cb95170dc85c7ca1a3f2abcd52": {
+    "category": "distraction",
+    "confidence": 95.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "karaoke"
+    ],
+    "rationale": "The title indicates a karaoke video, which is primarily for entertainment.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":95.0,\"tags\":[\"video\",\"entertainment\",\"karaoke\"],\"rationale\":\"The title indicates a karaoke video, which is primarily for entertainment.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189205
+  },
+  "c858e233454232f4ee5a5462131eb8ade15da35a": {
+    "category": "distraction",
+    "confidence": 95.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "karaoke"
+    ],
+    "rationale": "The title indicates a karaoke video on YouTube, which is primarily for entertainment.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":95.0,\"tags\":[\"video\",\"entertainment\",\"karaoke\"],\"rationale\":\"The title indicates a karaoke video on YouTube, which is primarily for entertainment.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189206
+  },
+  "a3fe22bc41393b2550dfcbac762c3bbc9d89243a": {
+    "category": "distraction",
+    "confidence": 95.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "karaoke"
+    ],
+    "rationale": "The title indicates a karaoke video on YouTube, which is primarily for entertainment.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":95.0,\"tags\":[\"video\",\"entertainment\",\"karaoke\"],\"rationale\":\"The title indicates a karaoke video on YouTube, which is primarily for entertainment.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189208
+  },
+  "eb695b5be77052cc73feb39495db4bb3db3ea5a7": {
+    "category": "distraction",
+    "confidence": 95.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "karaoke"
+    ],
+    "rationale": "The title indicates a karaoke video on YouTube, which is primarily for entertainment.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":95.0,\"tags\":[\"video\",\"entertainment\",\"karaoke\"],\"rationale\":\"The title indicates a karaoke video on YouTube, which is primarily for entertainment.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189209
+  },
+  "e439fe0216dd1f16b955484da1555cbdbe39bf9b": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "karaoke"
+    ],
+    "rationale": "The title suggests a karaoke video on YouTube, indicating entertainment.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"video\",\"entertainment\",\"karaoke\"],\"rationale\":\"The title suggests a karaoke video on YouTube, indicating entertainment.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189211
+  },
+  "0d8d7113034e201d2fb68642cee6f04989554ad2": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "social media",
+      "networking"
+    ],
+    "rationale": "LinkedIn feed primarily serves social networking and content consumption.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"social media\",\"networking\"],\"rationale\":\"LinkedIn feed primarily serves social networking and content consumption.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189213
+  },
+  "a72b1a6a78be6537713c6bcd922d641746881da6": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "games",
+      "entertainment"
+    ],
+    "rationale": "The presence of games suggests a focus on entertainment rather than productivity.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"games\",\"entertainment\"],\"rationale\":\"The presence of games suggests a focus on entertainment rather than productivity.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189214
+  },
+  "ac9d24793f16aa3a19112870a11ce559dc746621": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "networking",
+      "professional",
+      "social media"
+    ],
+    "rationale": "LinkedIn is primarily used for professional networking and career-related activities.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"networking\",\"professional\",\"social media\"],\"rationale\":\"LinkedIn is primarily used for professional networking and career-related activities.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189215
+  },
+  "54beaf275b4a072162e8fe557d911cad43b4ac93": {
+    "category": "neutral",
+    "confidence": 75.0,
+    "tags": [
+      "social",
+      "networking"
+    ],
+    "rationale": "LinkedIn is a professional networking site, but usage context varies.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":75.0,\"tags\":[\"social\",\"networking\"],\"rationale\":\"LinkedIn is a professional networking site, but usage context varies.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189217
+  },
+  "44435a7508a27b8196eb7bf791737364ad2c4152": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "social media",
+      "networking"
+    ],
+    "rationale": "LinkedIn feed suggests social media engagement rather than productive work.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"social media\",\"networking\"],\"rationale\":\"LinkedIn feed suggests social media engagement rather than productive work.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189218
+  },
+  "7c050cdb1447d29ac50647e9b33f59521ddd7bb4": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "API",
+      "development",
+      "OpenAI"
+    ],
+    "rationale": "API Platform suggests a focus on development and productivity related to OpenAI.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"API\",\"development\",\"OpenAI\"],\"rationale\":\"API Platform suggests a focus on development and productivity related to OpenAI.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189219
+  },
+  "bfa832b0e0d8dc65a2aafb6a4b8dfc362bb03483": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "API",
+      "development",
+      "OpenAI"
+    ],
+    "rationale": "Managing API keys suggests a focus on development and productivity.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"API\",\"development\",\"OpenAI\"],\"rationale\":\"Managing API keys suggests a focus on development and productivity.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189221
+  },
+  "bb308436d3f26231ac63f8fd6ee1fa587e9f1830": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "coding",
+      "AI",
+      "editor"
+    ],
+    "rationale": "Cursor suggests a focus on coding and productivity through AI assistance.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"coding\",\"AI\",\"editor\"],\"rationale\":\"Cursor suggests a focus on coding and productivity through AI assistance.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189222
+  },
+  "4ece19164be9a9d2743a331af0ba253b911b0d19": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "shopping",
+      "ecommerce"
+    ],
+    "rationale": "Amazon can be used for both work-related purchases and personal shopping.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"shopping\",\"ecommerce\"],\"rationale\":\"Amazon can be used for both work-related purchases and personal shopping.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189224
+  },
+  "8090df412f95628aaa13761f17a2a92799a2c041": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "shopping",
+      "ecommerce"
+    ],
+    "rationale": "Shopping for sofa covers is context-dependent and not strictly work-related.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"shopping\",\"ecommerce\"],\"rationale\":\"Shopping for sofa covers is context-dependent and not strictly work-related.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189225
+  },
+  "25c2b06fa969f6016ba17e8c71db1cde72d357eb": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "shopping",
+      "ecommerce"
+    ],
+    "rationale": "The title suggests a shopping context, which is ambiguous without further information.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"shopping\",\"ecommerce\"],\"rationale\":\"The title suggests a shopping context, which is ambiguous without further information.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189227
+  },
+  "de653bf911c8c13283cb2e06b9a7ff5feca4e7f4": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "offer",
+      "promotion"
+    ],
+    "rationale": "The title suggests a promotional context that is not clearly productive or distracting.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"offer\",\"promotion\"],\"rationale\":\"The title suggests a promotional context that is not clearly productive or distracting.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189228
+  },
+  "4329d8c44d591a1b334aefcd9e753904c8aecb18": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "video",
+      "entertainment",
+      "wedding"
+    ],
+    "rationale": "The title suggests content focused on entertainment related to a wedding.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"video\",\"entertainment\",\"wedding\"],\"rationale\":\"The title suggests content focused on entertainment related to a wedding.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189229
+  },
+  "02a549dc2a1a2f1040385288102b6cb520baf52d": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "forum",
+      "discussion",
+      "AI"
+    ],
+    "rationale": "The title suggests a discussion on a forum, likely for entertainment or casual inquiry.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"forum\",\"discussion\",\"AI\"],\"rationale\":\"The title suggests a discussion on a forum, likely for entertainment or casual inquiry.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189230
+  },
+  "f19b098aa3cd6c44c2a6917660f5b8bcd8826ab4": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "AI",
+      "writing",
+      "communication"
+    ],
+    "rationale": "ChatGPT is primarily used for productive tasks like writing and brainstorming.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"AI\",\"writing\",\"communication\"],\"rationale\":\"ChatGPT is primarily used for productive tasks like writing and brainstorming.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189231
+  },
+  "2d9797ca2ae20e9ca0ce0ad05c219a3244e92af8": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "document review",
+      "signing",
+      "email"
+    ],
+    "rationale": "The title indicates productive work related to reviewing and signing documents.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"document review\",\"signing\",\"email\"],\"rationale\":\"The title indicates productive work related to reviewing and signing documents.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189233
+  },
+  "edf65bcf54643b43504edcc6018a83aeaecb1ff2": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "coding",
+      "AI",
+      "editor"
+    ],
+    "rationale": "The title suggests a tool specifically designed for coding and productivity.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"coding\",\"AI\",\"editor\"],\"rationale\":\"The title suggests a tool specifically designed for coding and productivity.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189234
+  },
+  "e1c5a7f92376b0918f3e0e34fbf642057d543edf": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "development",
+      "API",
+      "documentation"
+    ],
+    "rationale": "The title suggests a focus on developer resources and API usage.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"development\",\"API\",\"documentation\"],\"rationale\":\"The title suggests a focus on developer resources and API usage.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189235
+  },
+  "ddaf90133572bea84b6f35d041b5e6875715e6be": {
+    "category": "neutral",
+    "confidence": 70.0,
+    "tags": [
+      "search",
+      "cooking"
+    ],
+    "rationale": "Dinner suggestions can be for meal planning but lacks clear productivity context.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":70.0,\"tags\":[\"search\",\"cooking\"],\"rationale\":\"Dinner suggestions can be for meal planning but lacks clear productivity context.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189237
+  },
+  "9e7551adc834f8e290a1a6580a1b3686d9237878": {
+    "category": "focus",
+    "confidence": 90.0,
+    "tags": [
+      "productivity",
+      "focus",
+      "time management"
+    ],
+    "rationale": "FocusPulse suggests a tool aimed at enhancing productivity and focus.",
+    "raw_response": "{\"category\":\"focus\",\"confidence\":90.0,\"tags\":[\"productivity\",\"focus\",\"time management\"],\"rationale\":\"FocusPulse suggests a tool aimed at enhancing productivity and focus.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189239
+  },
+  "64813c5a7dd5c1c628cb7a5d9fe1fbbdd69679a8": {
+    "category": "distraction",
+    "confidence": 90.0,
+    "tags": [
+      "games",
+      "entertainment",
+      "social"
+    ],
+    "rationale": "Games are primarily for entertainment, despite LinkedIn's professional context.",
+    "raw_response": "{\"category\":\"distraction\",\"confidence\":90.0,\"tags\":[\"games\",\"entertainment\",\"social\"],\"rationale\":\"Games are primarily for entertainment, despite LinkedIn's professional context.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189240
+  },
+  "53ae8e2cd64587a7c3cd7af93d1280ecdc83aae1": {
+    "category": "neutral",
+    "confidence": 80.0,
+    "tags": [
+      "email",
+      "verification"
+    ],
+    "rationale": "The title suggests an email related to verification, which is context-dependent.",
+    "raw_response": "{\"category\":\"neutral\",\"confidence\":80.0,\"tags\":[\"email\",\"verification\"],\"rationale\":\"The title suggests an email related to verification, which is context-dependent.\"}",
+    "model": "gpt-4o-mini-2024-07-18",
+    "ts": 1763189241
+  }
+}
