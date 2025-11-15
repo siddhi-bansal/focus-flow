@@ -256,7 +256,7 @@ def main():
             else:
                 return 'background-color: #f5f5f5'
         
-        styled_df = activity_log.style.applymap(
+        styled_df = activity_log.style.map(
             style_category,
             subset=['Category']
         )
